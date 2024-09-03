@@ -1,0 +1,21 @@
+artifact_path: sentiment_analysis
+flavors:
+  python_function:
+    cloudpickle_version: 2.2.1
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.12.4
+    streamable: false
+mlflow_version: 2.16.0
+model_size_bytes: 3339
+model_uuid: bbcf230b6b3c4fbe8d712598e01bbd62
+run_id: 2b96a582ad314cb9a706125b4125c33b
+saved_input_example_info:
+  artifact_path: input_example.json
+  serving_input_path: serving_input_example.json
+  type: json_object
+utc_time_created: '2024-09-03 17:19:43.255609'
