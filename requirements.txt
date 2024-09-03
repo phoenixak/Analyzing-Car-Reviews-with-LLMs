@@ -3,3 +3,6 @@ evaluate
 torch
 mlflow
 pandas
+sacremoses
+tf-keras
+sentencepiece
