@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Machine%20Learning/Analyzing%20Car%20Reviews%20with%20LLMs/mlruns/0/09d54bb082344079b841a2595c8a7b3a/artifacts
+end_time: 1725367856794
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 09d54bb082344079b841a2595c8a7b3a
+run_name: sentiment_analysis
+run_uuid: 09d54bb082344079b841a2595c8a7b3a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1725367850607
+status: 3
+tags: []
+user_id: phoni
