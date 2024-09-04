@@ -1,25 +1,27 @@
-# Recipe Site Traffic Analysis & Prediction
-
-This project uses advanced language models to analyze car reviews. It includes tasks such as sentiment analysis, translation, question answering, and summarization. The project is modularized, and integrates MLflow for experiment tracking and Docker for containerization.
+# Analyzing Car Reviews with LLMs
 
 ## Project Overview
 
-The objective of this project is to analyze car reviews using various language models and develop functionalities such as sentiment classification and text summarization. By leveraging state-of-the-art language models and applying them to car reviews, we aim to provide insights into customer opinions, improve user interactions, and enhance the overall review analysis process.
+This project utilizes advanced language models (LLMs) to analyze car reviews, performing tasks like sentiment analysis, translation, question answering, and summarization. By applying state-of-the-art NLP techniques, we aim to extract insights from car reviews, enhancing customer understanding and improving decision-making.
 
 Key Aspects:
-Data Preprocessing: Cleaning and transforming raw traffic data for analysis.
-Exploratory Data Analysis (EDA): Visualizing and understanding traffic trends.
-Model Development: Training machine learning models to predict traffic.
-Model Evaluation: Assessing model performance using metrics like MAE, RMSE, etc.
-Containerization: Docker is used to encapsulate the project environment.
-Experiment Tracking: MLFlow is integrated for tracking experiments and model versions.
 
-Features
-Traffic Analysis: Detailed analysis of traffic sources, user behavior, and site performance.
-Predictive Modeling: Implementation of regression models to predict future site traffic.
-Visualization: Interactive and static visualizations to understand traffic patterns.
-Containerized Environment: Easily reproducible environment using Docker.
-Experiment Tracking: MLFlow is used to track different model versions and experiments.
+Data Preprocessing: Handling and preparing car reviews data for analysis using LLMs.
+Sentiment Analysis: Classifying reviews as positive or negative based on their content.
+Translation: Translating car reviews from English to Spanish.
+Question Answering: Extracting answers from reviews based on specific questions.
+Summarization: Summarizing long reviews to provide concise insights.
+Containerization: Docker is used to encapsulate the project environment for easy replication.
+Experiment Tracking: MLflow is integrated for tracking experiments and managing different model versions.
+
+Features:
+
+Sentiment Analysis: Using LLMs to classify the sentiment of car reviews.
+Translation: Translating English car reviews to Spanish using NLP models.
+Question Answering: Extracting specific information from reviews using LLMs.
+Summarization: Summarizing lengthy car reviews for quick insights.
+Containerized Environment: Dockerized project to ensure consistency across different environments.
+Experiment Tracking: MLflow is utilized to track model performance and manage different experiments.
 
 ### Prerequisites
 
