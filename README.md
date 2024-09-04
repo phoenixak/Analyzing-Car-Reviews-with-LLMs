@@ -12,7 +12,6 @@ Translation: Translating car reviews from English to Spanish.
 Question Answering: Extracting answers from reviews based on specific questions.
 Summarization: Summarizing long reviews to provide concise insights.
 Containerization: Docker is used to encapsulate the project environment for easy replication.
-Experiment Tracking: MLflow is integrated for tracking experiments and managing different model versions.
 
 Features:
 
@@ -21,7 +20,6 @@ Translation: Translating English car reviews to Spanish using NLP models.
 Question Answering: Extracting specific information from reviews using LLMs.
 Summarization: Summarizing lengthy car reviews for quick insights.
 Containerized Environment: Dockerized project to ensure consistency across different environments.
-Experiment Tracking: MLflow is utilized to track model performance and manage different experiments.
 
 ### Prerequisites
 
