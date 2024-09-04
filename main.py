@@ -1,64 +1,60 @@
-from data.data_loader import load_reviews, load_reference_translations
-from models.sentiment_analysis import sentiment_analysis
-from models.translation import translate_review
-from models.question_answering import question_answering
-from models.summarization import summarize_text
-from models.evaluate_metrics import compute_metrics
-from utils.logger import setup_logger
-from utils.mlflow_tracking import log_model_to_mlflow
+import mlflow
+import mlflow.sklearn
+from src.pipelines import SentimentAnalysisPipeline, TranslationPipeline, SummarizationPipeline
+from src.models import QuestionAnsweringModel
+from src.utils import load_data, calculate_metrics, calculate_bleu_score
 
 def main():
-    logger = setup_logger()
+    # Initialize MLflow
+    mlflow.start_run()
 
     # Load data
-    file_path = "dataset/car_reviews.csv"
-    translations_path = "dataset/reference_translations.txt"
-    logger.info("Loading data...")
-    reviews = load_reviews(file_path)['Review'].tolist()
-    real_labels = load_reviews(file_path)['Class'].tolist()
-    reference_translations = load_reference_translations(translations_path)
+    reviews, real_labels = load_data(r"dataset\car_reviews.csv")
 
     # Sentiment Analysis
-    logger.info("Performing sentiment analysis...")
-    predicted_labels = sentiment_analysis(reviews)
-    predictions = [1 if label['label'] == "POSITIVE" else 0 for label in predicted_labels]
-    references = [1 if label == "POSITIVE" else 0 for label in real_labels]
-    accuracy_result = compute_metrics(references, predictions, "accuracy")
-    f1_result = compute_metrics(references, predictions, "f1")
-    logger.info(f"Accuracy: {accuracy_result['accuracy']}, F1: {f1_result['f1']}")
-
-    # Use a simplified input example for MLflow logging
-    input_example = ["I love this car!"]  # Simpler and shorter input example
-
-    # Log the sentiment analysis model to MLflow
-    log_model_to_mlflow(
-        model_name="sentiment_analysis",
-        model=sentiment_analysis,
-        input_example=input_example,
-        metrics={"accuracy": accuracy_result['accuracy'], "f1": f1_result['f1']}
-    )
+    sentiment_pipeline = SentimentAnalysisPipeline()
+    predicted_labels = sentiment_pipeline(reviews)
+    accuracy_result, f1_result = calculate_metrics(real_labels, predicted_labels)
+    
+    # Log metrics
+    mlflow.log_metric("accuracy", accuracy_result)
+    mlflow.log_metric("f1_score", f1_result)
 
     # Translation
-    logger.info("Performing translation...")
-    translated_review = translate_review(reviews[0], max_length=400)
-    logger.info(f"Translated review: {translated_review}")
+    translation_pipeline = TranslationPipeline()
+    first_review = reviews[0]
+    translated_review = translation_pipeline(first_review)
+    print(f"Model translation:\n{translated_review}")
 
-    # Compute BLEU Score
-    bleu_score = compute_metrics([translated_review], [reference_translations])
+    # Load reference translations
+    with open(r"dataset\reference_translations.txt", 'r') as file:
+        lines = file.readlines()
+    references = [line.strip() for line in lines]
+    print(f"Spanish translation references:\n{references}")
 
-    logger.info(f"BLEU Score: {bleu_score['bleu']}")
+    # Calculate and log BLEU score
+    bleu_score = calculate_bleu_score(translated_review, references)
+    mlflow.log_metric("bleu_score", bleu_score)
+    print(f"BLEU score: {bleu_score}")
 
     # Question Answering
-    logger.info("Performing question answering...")
+    question_answering_model = QuestionAnsweringModel()
     context = reviews[1]
     question = "What did he like about the brand?"
-    answer = question_answering(context, question)
-    logger.info(f"Answer: {answer}")
+    answer = question_answering_model(context, question)
+    print("Answer: ", answer)
+    
+    # Log model
+    mlflow.log_artifact("path_to_your_model_artifact")  # Replace with the actual path to your model artifact
 
     # Summarization
-    logger.info("Performing summarization...")
-    summarized_text = summarize_text(reviews[-1])
-    logger.info(f"Summarized text: {summarized_text}")
+    summarization_pipeline = SummarizationPipeline()
+    text_to_summarize = reviews[-1]
+    summarized_text = summarization_pipeline(text_to_summarize)
+    print(f"Summarized text:\n{summarized_text}")
+
+    # End the MLflow run
+    mlflow.end_run()
 
 if __name__ == "__main__":
     main()
