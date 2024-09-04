@@ -12,7 +12,7 @@ class TranslationPipeline:
         self.translator = pipeline("translation", model="Helsinki-NLP/opus-mt-en-es")
 
     def __call__(self, text):
-        return self.translator(text, max_length=400)[0]['translation_text']
+        return self.translator(text, max_length=27)[0]['translation_text']
 
 
 class SummarizationPipeline:
