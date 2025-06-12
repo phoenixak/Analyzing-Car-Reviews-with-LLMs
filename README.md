@@ -8,6 +8,9 @@
 
 This project provides a **comprehensive, production-ready system** for analyzing car reviews using state-of-the-art Large Language Models (LLMs). Built with enterprise-grade architecture, it features robust error handling, advanced caching, and beautiful visualizations to extract actionable insights from automotive customer feedback.
 
+
+live demo : https://huggingface.co/spaces/Phoenixak99/car-reviews-analyzer
+
 ## ✨ Key Features
 
 ### 🧠 Advanced NLP Capabilities
