@@ -101,6 +101,7 @@ class QuestionAnsweringModel(BaseModel):
 # These models were not integrated into the main pipeline and added unnecessary complexity.
 # If needed in the future, they can be re-implemented with proper integration.
 
+
 class NamedEntityRecognitionModel(BaseModel):
     """Enhanced NER model with caching support."""
 
@@ -110,7 +111,7 @@ class NamedEntityRecognitionModel(BaseModel):
         try:
             from src.model_cache import model_cache
             from src.config import ENABLE_MODEL_CACHE
-            
+
             if ENABLE_MODEL_CACHE:
                 self.ner = model_cache.get("ner_pipeline", lambda: pipeline("ner"))
             else:
@@ -148,21 +149,33 @@ class NamedEntityRecognitionModel(BaseModel):
                         "score": entity["score"],
                         "start": entity["start"],
                         "end": entity["end"],
+                        "_token_count": 1,
                     }
                 else:
                     # Continue building the entity
                     word_part = entity["word"].replace("##", "")
                     current_entity["word"] += word_part
                     current_entity["end"] = entity["end"]
-                    current_entity["score"] = (current_entity["score"] + entity["score"]) / 2
+                    n = current_entity["_token_count"]
+                    current_entity["score"] = (
+                        current_entity["score"] * n + entity["score"]
+                    ) / (n + 1)
+                    current_entity["_token_count"] = n + 1
 
             if current_entity is not None:
+                current_entity.pop("_token_count", None)
                 grouped_entities.append(current_entity)
+
+            # Clean up internal tracking keys
+            for entity in grouped_entities:
+                entity.pop("_token_count", None)
 
             # Filter out low-confidence entities
             filtered_entities = [e for e in grouped_entities if e["score"] > 0.7]
 
-            logger.info(f"Extracted {len(filtered_entities)} high-confidence entities from {len(grouped_entities)} total")
+            logger.info(
+                f"Extracted {len(filtered_entities)} high-confidence entities from {len(grouped_entities)} total"
+            )
             return filtered_entities
         except Exception as e:
             logger.error(f"Error during named entity recognition: {e}")

@@ -84,10 +84,10 @@ def calculate_metrics(
         }
 
         logger.info(f"Metrics: {metrics}")
-        print(f"Accuracy: {accuracy_result:.4f}")
-        print(f"F1 score: {f1_result:.4f}")
-        print(f"Precision: {precision_result:.4f}")
-        print(f"Recall: {recall_result:.4f}")
+        logger.info(f"Accuracy: {accuracy_result:.4f}")
+        logger.info(f"F1 score: {f1_result:.4f}")
+        logger.info(f"Precision: {precision_result:.4f}")
+        logger.info(f"Recall: {recall_result:.4f}")
 
         return metrics
     except Exception as e:
@@ -137,7 +137,7 @@ def save_results(results: Dict[str, Any], filename: str) -> str:
 
         # Save results
         file_path = os.path.join(RESULTS_DIR, filename)
-        with open(file_path, "w") as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4)
 
         logger.info(f"Results saved to {file_path}")

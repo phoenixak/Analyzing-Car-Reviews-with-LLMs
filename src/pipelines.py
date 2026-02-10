@@ -23,14 +23,14 @@ from src.config import (
     ASPECT_SENTIMENT_MODEL,
     ENABLE_MODEL_CACHE,
     MIN_TOPIC_SIZE,
-    NUM_TOPICS
+    NUM_TOPICS,
 )
 from src.error_handler import (
     robust_operation,
     safe_model_load,
     ModelLoadError,
     DataProcessingError,
-    error_handler
+    error_handler,
 )
 from src.model_cache import model_cache
 
@@ -73,7 +73,7 @@ class SentimentAnalysisPipeline(BasePipeline):
         super().__init__("Sentiment Analysis")
         self.model_name = model_name
         self.cache_key = f"sentiment_{model_name}"
-        
+
         if ENABLE_MODEL_CACHE:
             # Pre-cache the model for better performance
             try:
@@ -88,18 +88,18 @@ class SentimentAnalysisPipeline(BasePipeline):
             return model_cache.get(
                 self.cache_key,
                 lambda: safe_model_load(
-                    pipeline, 
+                    pipeline,
                     self.model_name,
-                    task="sentiment-analysis", 
-                    model=self.model_name
-                )
+                    task="sentiment-analysis",
+                    model=self.model_name,
+                ),
             )
         else:
             return safe_model_load(
                 pipeline,
                 self.model_name,
                 task="sentiment-analysis",
-                model=self.model_name
+                model=self.model_name,
             )
 
     @robust_operation(fallback_value=[], context="sentiment_analysis")
@@ -116,33 +116,29 @@ class SentimentAnalysisPipeline(BasePipeline):
         logger.info(
             f"Analyzing sentiment of {'multiple reviews' if isinstance(reviews, list) else 'a review'}"
         )
-        
+
         if not reviews:
             logger.warning("No reviews provided for sentiment analysis")
             return []
-        
-        try:
-            classifier = self._get_classifier()
-            
-            if not classifier:
-                raise ModelLoadError(f"Failed to load sentiment classifier: {self.model_name}")
-            
-            # Process reviews
-            results = classifier(reviews)
-            if isinstance(reviews, str):
-                results = [results]
-            
-            # Validate results
-            if not isinstance(results, list):
-                raise DataProcessingError("Sentiment analysis returned invalid format")
-            
-            logger.info(f"Successfully analyzed sentiment for {len(results)} review(s)")
-            return results
-            
-        except Exception as e:
-            error_handler.handle_error(e, "sentiment_analysis")
-            # Return empty results as fallback
-            return [{"label": "UNKNOWN", "score": 0.0} for _ in (reviews if isinstance(reviews, list) else [reviews])]
+
+        classifier = self._get_classifier()
+
+        if not classifier:
+            raise ModelLoadError(
+                f"Failed to load sentiment classifier: {self.model_name}"
+            )
+
+        # Process reviews
+        results = classifier(reviews)
+        if isinstance(reviews, str):
+            results = [results]
+
+        # Validate results
+        if not isinstance(results, list):
+            raise DataProcessingError("Sentiment analysis returned invalid format")
+
+        logger.info(f"Successfully analyzed sentiment for {len(results)} review(s)")
+        return results
 
 
 class TranslationPipeline(BasePipeline):
@@ -225,7 +221,9 @@ class SummarizationPipeline(BasePipeline):
 class TopicModelingPipeline(BasePipeline):
     """Pipeline for topic modeling of car reviews using BERTopic."""
 
-    def __init__(self, num_topics: int = NUM_TOPICS, min_topic_size: int = MIN_TOPIC_SIZE):
+    def __init__(
+        self, num_topics: int = NUM_TOPICS, min_topic_size: int = MIN_TOPIC_SIZE
+    ):
         """
         Initialize the topic modeling pipeline.
 
@@ -237,19 +235,19 @@ class TopicModelingPipeline(BasePipeline):
         self.num_topics = num_topics
         self.min_topic_size = min_topic_size
         self.topic_model = None
-        
+
         try:
             from bertopic import BERTopic
             from sentence_transformers import SentenceTransformer
-            
+
             # Initialize BERTopic with car-specific settings
-            self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+            self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
             self.topic_model = BERTopic(
                 embedding_model=self.embedding_model,
                 min_topic_size=min_topic_size,
                 nr_topics=num_topics,
                 calculate_probabilities=True,
-                verbose=False
+                verbose=False,
             )
             logger.info(f"Initialized BERTopic with {num_topics} topics")
         except ImportError as e:
@@ -272,56 +270,71 @@ class TopicModelingPipeline(BasePipeline):
         logger.info(f"Extracting topics from {len(texts)} texts")
         try:
             if len(texts) < self.min_topic_size:
-                logger.warning(f"Not enough texts ({len(texts)}) for topic modeling. Need at least {self.min_topic_size}")
+                logger.warning(
+                    f"Not enough texts ({len(texts)}) for topic modeling. Need at least {self.min_topic_size}"
+                )
                 return {
                     "topics": [],
                     "topic_labels": [],
                     "topic_words": {},
                     "document_topics": [],
-                    "topic_info": "Insufficient data for topic modeling"
+                    "topic_info": "Insufficient data for topic modeling",
                 }
-            
+
             # Fit the model and transform documents
             topics, probabilities = self.topic_model.fit_transform(texts)
-            
+
             # Get topic information
             topic_info = self.topic_model.get_topic_info()
-            topic_labels = [self.topic_model.get_topic(topic_id) for topic_id in range(len(topic_info))]
-            
+            topic_labels = [
+                self.topic_model.get_topic(topic_id)
+                for topic_id in range(len(topic_info))
+            ]
+
             # Create topic words dictionary
             topic_words = {}
             for topic_id in range(len(topic_info)):
                 if topic_id != -1:  # Exclude outlier topic
                     words = self.topic_model.get_topic(topic_id)
-                    topic_words[f"Topic {topic_id}"] = [word for word, score in words[:5]]
-            
+                    topic_words[f"Topic {topic_id}"] = [
+                        word for word, score in words[:5]
+                    ]
+
             # Create document-topic mapping
             document_topics = []
-            for i, (text, topic_id, prob) in enumerate(zip(texts, topics, probabilities)):
+            for i, (text, topic_id, prob) in enumerate(
+                zip(texts, topics, probabilities)
+            ):
                 topic_name = f"Topic {topic_id}" if topic_id != -1 else "Outlier"
                 max_prob = max(prob) if isinstance(prob, list) else prob
-                
-                document_topics.append({
-                    "text": text[:100] + "..." if len(text) > 100 else text,
-                    "topic_id": topic_id,
-                    "topic_name": topic_name,
-                    "probability": float(max_prob),
-                    "keywords": topic_words.get(topic_name, [])
-                })
-            
+
+                document_topics.append(
+                    {
+                        "text": text[:100] + "..." if len(text) > 100 else text,
+                        "topic_id": topic_id,
+                        "topic_name": topic_name,
+                        "probability": float(max_prob),
+                        "keywords": topic_words.get(topic_name, []),
+                    }
+                )
+
             results = {
                 "topics": topics,
                 "topic_labels": topic_labels,
                 "topic_words": topic_words,
                 "document_topics": document_topics,
-                "topic_info": topic_info.to_dict('records') if hasattr(topic_info, 'to_dict') else str(topic_info),
+                "topic_info": topic_info.to_dict("records")
+                if hasattr(topic_info, "to_dict")
+                else str(topic_info),
                 "num_topics": len(topic_words),
-                "outliers": sum(1 for t in topics if t == -1)
+                "outliers": sum(1 for t in topics if t == -1),
             }
-            
-            logger.info(f"Successfully extracted {len(topic_words)} topics from {len(texts)} documents")
+
+            logger.info(
+                f"Successfully extracted {len(topic_words)} topics from {len(texts)} documents"
+            )
             return results
-            
+
         except Exception as e:
             logger.error(f"Error during topic modeling: {e}")
             # Return a fallback response instead of crashing
@@ -332,7 +345,7 @@ class TopicModelingPipeline(BasePipeline):
                 "document_topics": [],
                 "topic_info": f"Error: {str(e)}",
                 "num_topics": 0,
-                "outliers": 0
+                "outliers": 0,
             }
 
 

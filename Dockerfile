@@ -30,8 +30,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Download NLTK data and model data
 RUN python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('punkt'); nltk.download('stopwords')" || true
 
-# Pre-download some common models to speed up first run
-RUN python -c "from transformers import pipeline; pipeline('sentiment-analysis', model='cardiffnlp/twitter-roberta-base-sentiment-latest')" || true
+# Pre-download the sentiment model used in config
+RUN python -c "from transformers import pipeline; pipeline('sentiment-analysis', model='distilbert-base-uncased-finetuned-sst-2-english')" || true
 
 # Copy the project code into the container
 COPY . .
@@ -42,9 +42,6 @@ RUN mkdir -p results logs models
 # Set proper permissions
 RUN chmod +x main.py
 
-# Expose port 5000 for dashboard and 8080 for enhanced CLI
-EXPOSE 5000 8080
-
 # Health check to ensure the container is working
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD python -c "import src.pipelines; print('OK')" || exit 1
@@ -53,4 +50,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 ENTRYPOINT ["python", "-m", "src.enhanced_cli"]
 
 # Default command line arguments for comprehensive analysis
-CMD ["--task", "all", "--visualize", "--save-results", "--verbose", "--output-format", "json"]
+CMD ["--task", "all", "--visualize", "--save-results", "--verbose"]

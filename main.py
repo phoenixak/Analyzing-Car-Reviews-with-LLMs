@@ -37,6 +37,8 @@ from src.visualization import (
     plot_named_entities,
     generate_wordcloud,
     create_interactive_dashboard,
+    create_topic_exploration_dashboard,
+    create_entity_analysis_dashboard,
 )
 from src.logger import setup_logger, get_logger
 from src.config import DATASET_PATH, REFERENCE_TRANSLATIONS_PATH
@@ -45,11 +47,13 @@ from src.config import DATASET_PATH, REFERENCE_TRANSLATIONS_PATH
 logger = get_logger(__name__)
 
 
-def parse_args():
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Analyze car reviews using Large Language Models"
-    )
+def parse_args(argv=None):
+    """Parse command line arguments.
+
+    Args:
+        argv: Optional list of arguments to parse. Defaults to sys.argv[1:].
+    """
+    parser = argparse.ArgumentParser(description="Analyze car reviews using Large Language Models")
 
     parser.add_argument(
         "--data-file",
@@ -69,23 +73,20 @@ def parse_args():
             "topic",
             "aspect",
             "ner",
+            "evaluate",
             "all",
         ],
         default="all",
         help="NLP task to perform",
     )
 
-    parser.add_argument(
-        "--visualize", action="store_true", help="Generate visualizations"
-    )
+    parser.add_argument("--visualize", action="store_true", help="Generate visualizations")
 
-    parser.add_argument(
-        "--save-results", action="store_true", help="Save results to disk"
-    )
+    parser.add_argument("--save-results", action="store_true", help="Save results to disk")
 
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def sentiment_analysis(
@@ -208,9 +209,7 @@ def question_answering(reviews: List[str], visualize: bool = False) -> Dict[str,
     return {"task": "question_answering", "context": context, "qa_pairs": answers}
 
 
-def summarization_analysis(
-    reviews: List[str], visualize: bool = False
-) -> Dict[str, Any]:
+def summarization_analysis(reviews: List[str], visualize: bool = False) -> Dict[str, Any]:
     """
     Summarize car reviews.
 
@@ -270,13 +269,17 @@ def topic_modeling(reviews: List[str], visualize: bool = False) -> Dict[str, Any
         # Create a format compatible with the visualization function
         viz_data = []
         for doc_topic in topic_results["document_topics"]:
-            viz_data.append({
-                "topics": [{
-                    "topic_id": doc_topic["topic_id"],
-                    "score": doc_topic["probability"]
-                }]
-            })
-        
+            viz_data.append(
+                {
+                    "topics": [
+                        {
+                            "topic_id": doc_topic["topic_id"],
+                            "score": doc_topic["probability"],
+                        }
+                    ]
+                }
+            )
+
         plot_topic_distribution(
             viz_data, title="Topic Distribution", filename="topic_distribution.png"
         )
@@ -285,9 +288,7 @@ def topic_modeling(reviews: List[str], visualize: bool = False) -> Dict[str, Any
     return {"task": "topic_modeling", "results": topic_results}
 
 
-def aspect_sentiment_analysis(
-    reviews: List[str], visualize: bool = False
-) -> Dict[str, Any]:
+def aspect_sentiment_analysis(reviews: List[str], visualize: bool = False) -> Dict[str, Any]:
     """
     Analyze sentiment for specific aspects of car reviews.
 
@@ -323,9 +324,7 @@ def aspect_sentiment_analysis(
     }
 
 
-def named_entity_recognition(
-    reviews: List[str], visualize: bool = False
-) -> Dict[str, Any]:
+def named_entity_recognition(reviews: List[str], visualize: bool = False) -> Dict[str, Any]:
     """
     Extract named entities from car reviews.
 
@@ -347,9 +346,7 @@ def named_entity_recognition(
 
     # Generate visualizations if requested
     if visualize:
-        plot_named_entities(
-            entities, title="Named Entities", filename="named_entities.png"
-        )
+        plot_named_entities(entities, title="Named Entities", filename="named_entities.png")
 
     # Return results
     return {
@@ -359,10 +356,14 @@ def named_entity_recognition(
     }
 
 
-def main():
-    """Main function."""
+def main(argv=None):
+    """Main function.
+
+    Args:
+        argv: Optional list of arguments to parse. Defaults to sys.argv[1:].
+    """
     # Parse arguments
-    args = parse_args()
+    args = parse_args(argv)
 
     # Configure logging
     log_level = "INFO" if args.verbose else "WARNING"
@@ -399,16 +400,33 @@ def main():
     if args.task in ["ner", "all"]:
         results["ner"] = named_entity_recognition(reviews, args.visualize)
 
+    if args.task == "evaluate":
+        from src.evaluation import evaluate_sentiment_model
+
+        logger.info("Running sentiment model evaluation")
+        eval_metrics = evaluate_sentiment_model()
+        results["evaluate"] = {
+            "task": "evaluate",
+            "metrics": eval_metrics,
+        }
+        logger.info("Evaluation F1: %.4f", eval_metrics["f1"])
+
     # Generate word cloud if visualizations are enabled
     if args.visualize:
-        generate_wordcloud(
-            reviews, title="Car Reviews Word Cloud", filename="word_cloud.png"
-        )
+        generate_wordcloud(reviews, title="Car Reviews Word Cloud", filename="word_cloud.png")
 
         # Create interactive dashboard
         create_interactive_dashboard(
             results, title="Car Reviews Analysis Dashboard", filename="dashboard.html"
         )
+
+        # Create topic exploration dashboard if topic results are available
+        if "topic" in results and results["topic"].get("results"):
+            create_topic_exploration_dashboard(results["topic"]["results"])
+
+        # Create entity analysis dashboard if NER results are available
+        if "ner" in results and results["ner"].get("entities"):
+            create_entity_analysis_dashboard(results["ner"]["entities"])
 
     # Save results if requested
     if args.save_results:

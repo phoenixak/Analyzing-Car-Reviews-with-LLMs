@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "car-reviews-nlp"
+version = "0.1.0"
+description = "NLP pipeline for analyzing car reviews using transformer-based language models"
+requires-python = ">= 3.10"
+dependencies = [
+    "pandas>=2.0.3",
+    "numpy>=1.24.4",
+    "transformers>=4.31.0",
+    "torch>=2.0.0",
+    "evaluate>=0.4.0",
+    "matplotlib>=3.7.2",
+    "seaborn>=0.12.2",
+    "wordcloud>=1.9.2",
+    "plotly>=5.15.0",
+    "nltk>=3.8.1",
+    "scikit-learn>=1.3.0",
+    "tqdm>=4.65.0",
+    "datasets>=2.13.0",
+    "sentencepiece>=0.1.99",
+    "protobuf>=3.20.3",
+    "sacremoses>=0.0.53",
+    "accelerate>=0.21.0",
+    "huggingface-hub>=0.21.4",
+    "tokenizers>=0.13.3",
+    "safetensors>=0.5.3",
+    "regex>=2024.11.6",
+    "filelock>=3.18.0",
+    "bertopic>=0.15.0",
+    "umap-learn>=0.5.4",
+    "hdbscan>=0.8.33",
+    "sentence-transformers>=2.2.2",
+    "rich>=13.6.0",
+    "click>=8.1.7",
+    "memory-profiler>=0.61.0",
+    "psutil>=5.9.6",
+    "openpyxl>=3.1.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.2",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+car-reviews = "src.enhanced_cli:enhanced_main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.setuptools.packages.find]
+include = ["src*"]
