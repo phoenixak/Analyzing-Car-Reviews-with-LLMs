@@ -4,7 +4,7 @@ emoji: "\U0001F697"
 colorFrom: blue
 colorTo: green
 sdk: gradio
-sdk_version: "4.44.0"
+sdk_version: "5.12.0"
 app_file: app.py
 pinned: false
 ---
@@ -45,7 +45,7 @@ This Space is a demo component of the larger project:
 ## Run Locally
 
 ```bash
-git clone https://huggingface.co/spaces/YOUR_USERNAME/car-reviews-analyzer
+git clone https://huggingface.co/spaces/Phoenixak99/car-reviews-analyzer
 cd car-reviews-analyzer
 pip install -r requirements.txt
 python app.py
