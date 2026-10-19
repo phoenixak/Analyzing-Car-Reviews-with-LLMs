@@ -18,9 +18,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-entities = ["gliner>=0.2.16"]
+entities = ["gliner>=0.2.16", "sentencepiece>=0.2", "tiktoken>=0.8", "protobuf>=5"]
 data = ["httpx>=0.27"]
-demo = ["gradio>=5.9", "pandas>=2.2", "plotly>=5.24", "gliner>=0.2.16"]
+demo = ["gradio>=5.9", "pandas>=2.2", "plotly>=5.24", "gliner>=0.2.16", "sentencepiece>=0.2", "tiktoken>=0.8", "protobuf>=5"]
 dev = ["pytest>=8", "ruff>=0.8", "httpx>=0.27"]
 
 [tool.setuptools.packages.find]

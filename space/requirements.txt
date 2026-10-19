@@ -2,6 +2,9 @@
 gradio==6.30.0
 transformers>=4.48
 gliner>=0.2.16
+sentencepiece>=0.2   # GLiNER tokenizer conversion
+tiktoken>=0.8
+protobuf>=5
 pandas>=2.2
 plotly>=5.24
 huggingface_hub>=0.26
