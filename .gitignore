@@ -80,3 +80,11 @@ results/
 # OS specific
 .DS_Store
 Thumbs.db 
+# v2
+.venv/
+.ruff_cache/
+models/
+data/pilot.jsonl
+train*.log
+space_local.log
+data/test_cars.json

@@ -1,0 +1,113 @@
+{
+  "v2": {
+    "aspect_macro_f1": 0.9206911816533075,
+    "mention_f1": 0.9908675799086758,
+    "sentiment_acc_when_mentioned": 0.9562594268476622,
+    "exact_match": 0.9242424242424242,
+    "per_aspect": {
+      "price": {
+        "macro_f1": 1.0,
+        "mention_f1": 1.0,
+        "sentiment_acc_when_mentioned": 1.0
+      },
+      "performance": {
+        "macro_f1": 0.9507004964346406,
+        "mention_f1": 0.9824561403508771,
+        "sentiment_acc_when_mentioned": 0.9425287356321839
+      },
+      "comfort": {
+        "macro_f1": 0.9949453804850954,
+        "mention_f1": 0.9940828402366864,
+        "sentiment_acc_when_mentioned": 0.9882352941176471
+      },
+      "reliability": {
+        "macro_f1": 0.9065293613832236,
+        "mention_f1": 0.994475138121547,
+        "sentiment_acc_when_mentioned": 0.9560439560439561
+      },
+      "design": {
+        "macro_f1": 0.7297528701799971,
+        "mention_f1": 0.987012987012987,
+        "sentiment_acc_when_mentioned": 0.9358974358974359
+      },
+      "safety": {
+        "macro_f1": 0.8965604846589799,
+        "mention_f1": 1.0,
+        "sentiment_acc_when_mentioned": 0.9295774647887324
+      },
+      "fuel_economy": {
+        "macro_f1": 0.9507006151742994,
+        "mention_f1": 1.0,
+        "sentiment_acc_when_mentioned": 0.9726027397260274
+      },
+      "technology": {
+        "macro_f1": 0.9363402449102246,
+        "mention_f1": 0.9751243781094527,
+        "sentiment_acc_when_mentioned": 0.9320388349514563
+      }
+    },
+    "overall_accuracy": 0.906060606060606
+  },
+  "v1": {
+    "aspect_macro_f1": 0.18318588923811224,
+    "mention_f1": 0.4014532243415077,
+    "sentiment_acc_when_mentioned": 0.8823529411764706,
+    "exact_match": 0.0,
+    "per_aspect": {
+      "price": {
+        "macro_f1": 0.1479573058520427,
+        "mention_f1": 0.37037037037037035,
+        "sentiment_acc_when_mentioned": 0.8
+      },
+      "performance": {
+        "macro_f1": 0.195309670409272,
+        "mention_f1": 0.4172661870503597,
+        "sentiment_acc_when_mentioned": 0.8735632183908046
+      },
+      "comfort": {
+        "macro_f1": 0.19229478863788863,
+        "mention_f1": 0.40963855421686746,
+        "sentiment_acc_when_mentioned": 0.8823529411764706
+      },
+      "reliability": {
+        "macro_f1": 0.20080645161290323,
+        "mention_f1": 0.4323040380047506,
+        "sentiment_acc_when_mentioned": 0.9120879120879121
+      },
+      "design": {
+        "macro_f1": 0.1888092319172752,
+        "mention_f1": 0.38235294117647056,
+        "sentiment_acc_when_mentioned": 0.9615384615384616
+      },
+      "safety": {
+        "macro_f1": 0.1513758865248227,
+        "mention_f1": 0.3541147132169576,
+        "sentiment_acc_when_mentioned": 0.8591549295774648
+      },
+      "fuel_economy": {
+        "macro_f1": 0.16675191815856777,
+        "mention_f1": 0.36228287841191065,
+        "sentiment_acc_when_mentioned": 0.863013698630137
+      },
+      "technology": {
+        "macro_f1": 0.22218186079212562,
+        "mention_f1": 0.47575057736720555,
+        "sentiment_acc_when_mentioned": 0.8932038834951457
+      }
+    },
+    "overall_accuracy": 0.7424242424242424
+  },
+  "latency_ms": {
+    "v2": 183.77444999987347,
+    "v1": 2366.266400000086
+  },
+  "test_cars": [
+    "Cadillac Lyriq",
+    "Hyundai Elantra",
+    "Nissan Altima",
+    "Porsche Macan",
+    "Rivian R1S",
+    "Subaru Crosstrek"
+  ],
+  "n_test": 330
+}

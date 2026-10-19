@@ -1,0 +1,7 @@
+# torch (CPU) is installed by the Dockerfile
+gradio==6.30.0
+transformers>=4.48
+gliner>=0.2.16
+pandas>=2.2
+plotly>=5.24
+huggingface_hub>=0.26
